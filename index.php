@@ -19,7 +19,6 @@ $context = stream_context_create($arrayConfig);
 
 $url = "https://www.gutenberg.org/";
 $html = file_get_contents($url, false, $context);
-$arrayP = array();
 
 $dom = new DOMDocument();
 libxml_use_internal_errors(true);
@@ -31,6 +30,9 @@ libxml_clear_errors();
 //Captura as tags div
 $tagsDiv = $dom->getElementsByTagName('div');
 
+//Array de paragráfos
+$arrayParagrafos = [];
+
 foreach ($tagsDiv as $div) {
     $classe = $div->getAttribute('class');
 
@@ -38,21 +40,21 @@ foreach ($tagsDiv as $div) {
         $divsInternas = $div->getElementsByTagName('div');
 
         foreach($divsInternas as $divInterna) {
-
             $classeInterna = $divInterna->getAttribute('class');
-
-            if ($classeInterna == "box_announce") {
-
+            if ($classeInterna == 'box_announce') {
                 echo $divInterna->nodeValue;
-            }
-
-            $tagP_interna = $divInterna->getElementsByTagName('p');
-
-            foreach ($tagP_interna as $tagP_internas) {
                 
-                    $arrayP[0] = $tagP_internas->nodeValue;
+                //Vai percorrer a página e achar o dois parágrafos, que 
+                //estão na div box_announce.
+                $tagsP = $divInterna->getElementsByTagName('p');
+                foreach ($tagsP as $p) {
+                    $arrayParagrafos [] = $p->nodeValue;
+                }
+            break;
             }
         }
+    break;
         }
 }
-print_r($arrayP);
+//Exibe o array de parágrafos
+print_r($arrayParagrafos);
